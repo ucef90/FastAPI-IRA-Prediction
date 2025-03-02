@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ML API Prediction</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .header-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container-fluid p-0">
+      <img
+        src="https://issues.fr/wp-content/uploads/2024/03/Une-nouvelle-etude-relie-la-pollution-routiere-a-davantage-de-758x433.jpg"
+        alt="AI City Brain"
+        class="header-image"
+      />
+    </div>
+    <div class="container mt-5">
+      <div class="card shadow p-4">
+        <h2 class="text-center mb-4">Machine Learning API Prediction</h2>
+        <form id="predictionForm">
+          <div id="inputFields" class="row g-3"></div>
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+          </div>
+        </form>
+        <h3 class="mt-4">Résultat :</h3>
+        <pre id="result" class="p-3 bg-white border rounded"></pre>
+      </div>
+    </div>
+
+    <script>
+      const fields = {
+        avg_temperature_avg: 9.5,
+        avg_temperature_max: 14.8,
+        avg_temperature_min: 5.2,
+        average_No_2: 18.5,
+        avg_pression: 1012,
+        avg_wind: 15.4,
+        year: 2025,
+        average_So_2: 2.9,
+        indice: 75,
+        average_Co: 0.8,
+        SYM3: 46,
+        avg_precipitation: 2.1,
+        SYM34: 38,
+        SYM23: 52,
+        average_IQA_global: 78,
+        SYM8: 39,
+        SYM6: 29,
+        week: 10,
+        moyenne_Pm_2_5: 12.4,
+        SYM19: 58,
+        SYM39: 33,
+        SYM26: 31,
+        SYM22: 27,
+        SYM68: 50,
+        average_Pm_10: 22.8,
+        SYM32: 35,
+        SYM5: 40,
+        SYM24: 49,
+      };
+
+      const inputFieldsDiv = document.getElementById("inputFields");
+
+      for (const key in fields) {
+        const div = document.createElement("div");
+        div.className = "col-md-4";
+
+        const label = document.createElement("label");
+        label.textContent = key;
+        label.className = "form-label";
+        label.htmlFor = key;
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.className = "form-control";
+        input.id = key;
+        input.name = key;
+        input.value = fields[key];
+        input.step = "any";
+
+        div.appendChild(label);
+        div.appendChild(input);
+        inputFieldsDiv.appendChild(div);
+      }
+
+      document
+        .getElementById("predictionForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          let formData = {};
+          for (const key in fields) {
+            formData[key] = parseFloat(document.getElementById(key).value);
+          }
+
+          fetch("http://localhost:8000/predict/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("result").textContent = JSON.stringify(
+                data,
+                null,
+                2
+              );
+            })
+            .catch((error) => {
+              document.getElementById("result").textContent =
+                "Erreur : " + error;
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
