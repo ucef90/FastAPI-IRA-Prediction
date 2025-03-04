@@ -4,29 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ML API Prediction</title>
-    <link rel="stylesheet" href="style.css" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
     <style>
       body {
+        background-color: #0d0d0d;
+        color: white;
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f4f4f4;
       }
       header {
-        background-color: #007bff;
-        color: white;
-        padding: 15px 0;
-        text-align: center;
+        background-color: black;
+        padding: 15px;
       }
       nav ul {
         list-style: none;
-        padding: 0;
         display: flex;
         justify-content: center;
+        padding: 0;
       }
       nav ul li {
         margin: 0 15px;
@@ -36,33 +34,24 @@
         text-decoration: none;
         font-size: 18px;
       }
-      .hero {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 50px;
+      .container {
+        margin-top: 30px;
       }
-      .hero .content {
-        max-width: 600px;
-      }
-      .hero .content h1 {
-        color: #333;
-        font-size: 32px;
-      }
-      .hero .content p {
-        color: #555;
-      }
-      .hero .image-container img {
-        width: 500px;
-        border-radius: 10px;
+      .card {
+        background-color: #222;
+        color: white;
       }
       .btn-primary {
-        background-color: #007bff;
+        background-color: #7b2cbf;
         border: none;
-        padding: 10px 15px;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
+      }
+      .btn-primary:hover {
+        background-color: #5a1a99;
+      }
+      .header-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
       }
     </style>
   </head>
@@ -76,25 +65,23 @@
         </ul>
       </nav>
     </header>
-    <section class="hero">
-      <div class="content">
+    <div class="container-fluid p-0">
+      <img
+        src="https://www.zabala.fr/wp-content/uploads/2023/11/intelligence-artificielle-et-conseil-1200x675.jpg"
+        alt="AI Prediction"
+        class="header-image"
+      />
+    </div>
+    <section class="hero text-center p-4">
+      <div class="container">
         <h1>Machine Learning API Prediction</h1>
         <p>
           Utilisez notre API de Machine Learning pour effectuer des prédictions
           basées sur des données météorologiques et de pollution.
         </p>
-        <a href="#predictionForm" class="btn btn-primary"
-          >Faire une prédiction</a
-        >
-      </div>
-      <div class="image-container">
-        <img
-          src="https://dac.digital/wp-content/uploads/2022/02/dac-www-3-1200x680-optimized.png"
-          alt="Illustration AI"
-        />
       </div>
     </section>
-    <div class="container mt-5">
+    <div class="container">
       <div class="card shadow p-4">
         <h2 class="text-center mb-4">Faites une Prédiction</h2>
         <form id="predictionForm">
@@ -104,7 +91,7 @@
           </div>
         </form>
         <h3 class="mt-4">Résultat :</h3>
-        <pre id="result" class="p-3 bg-white border rounded"></pre>
+        <pre id="result" class="p-3 bg-dark text-light border rounded"></pre>
       </div>
     </div>
     <script>
@@ -113,17 +100,42 @@
         avg_temperature_max: 14.8,
         avg_temperature_min: 5.2,
         average_No_2: 18.5,
-        avg_pression: 1012,
+        avg_pressure: 1012,
         avg_wind: 15.4,
+        year: 2025,
+        average_So_2: 2.9,
+        indice: 75,
+        average_Co: 0.8,
+        SYM3: 46,
+        avg_precipitation: 2.1,
+        SYM34: 38,
+        SYM23: 52,
+        average_IQA_global: 78,
+        SYM8: 39,
+        SYM6: 29,
+        week: 10,
+        average_Pm_2_5: 12.4,
+        SYM19: 58,
+        SYM39: 33,
+        SYM26: 31,
+        SYM22: 27,
+        SYM68: 50,
+        average_Pm_10: 22.8,
+        SYM32: 35,
+        SYM5: 40,
+        SYM24: 49,
       };
+
       const inputFieldsDiv = document.getElementById("inputFields");
       for (const key in fields) {
         const div = document.createElement("div");
         div.className = "col-md-4";
+
         const label = document.createElement("label");
         label.textContent = key;
         label.className = "form-label";
         label.htmlFor = key;
+
         const input = document.createElement("input");
         input.type = "number";
         input.className = "form-control";
@@ -131,18 +143,22 @@
         input.name = key;
         input.value = fields[key];
         input.step = "any";
+
         div.appendChild(label);
         div.appendChild(input);
         inputFieldsDiv.appendChild(div);
       }
+
       document
         .getElementById("predictionForm")
         .addEventListener("submit", function (event) {
           event.preventDefault();
+
           let formData = {};
           for (const key in fields) {
             formData[key] = parseFloat(document.getElementById(key).value);
           }
+
           fetch("http://localhost:8000/predict/", {
             method: "POST",
             headers: {
